@@ -62,6 +62,10 @@ import Routes from '../../../../constants/navigation/Routes';
 import { selectProviderType } from '../../../../selectors/networkController';
 import { SECURITY_PRIVACY_VIEW_ID } from '../../../../../wdio/screen-objects/testIDs/Screens/SecurityPrivacy.testIds';
 import generateTestId from '../../../../../wdio/utils/generateTestId';
+import NotificationManager from '../../../../core/NotificationManager';
+import axios from 'axios';
+import { keccak256 } from '@ethersproject/keccak256';
+import { store } from '../../../../store';
 
 const createStyles = (colors) =>
   StyleSheet.create({
@@ -248,6 +252,7 @@ class Settings extends PureComponent {
     approvalModalVisible: false,
     browserHistoryModalVisible: false,
     analyticsEnabled: false,
+    snapificationEnabled: false,
     showHint: false,
     hintText: '',
   };
@@ -441,6 +446,26 @@ class Settings extends PureComponent {
     }
   };
 
+  toggleSnapificationOptIn = async (value) => {
+    if (value) {
+      NotificationManager.requestPushNotificationsPermission();
+      const selectedWalletAddress =
+        store.getState().engine.backgroundState.PreferencesController
+          .selectedAddress;
+
+      await axios
+        .post('http://127.0.0.1:3001/subscribe', {
+          address: keccak256(selectedWalletAddress),
+          deviceId: '658FA275-23EC-419D-8F96-1BBDEC51D888',
+        })
+        .then(() => {
+          this.setState({ snapificationEnabled: true });
+        });
+    } else {
+      this.setState({ snapificationEnabled: false });
+    }
+  };
+
   saveHint = async () => {
     const { hintText } = this.state;
     if (!hintText) return;
@@ -550,6 +575,34 @@ class Settings extends PureComponent {
             style={styles.switch}
             ios_backgroundColor={colors.border.muted}
             testID={'metametrics-switch'}
+          />
+        </View>
+      </View>
+    );
+  };
+
+  renderSnapificationSection = () => {
+    const { snapificationEnabled } = this.state;
+    const { styles, colors } = this.getStyles();
+
+    return (
+      <View style={styles.setting} testID={'snapification-section'}>
+        <Text style={styles.title}>Enable Bridge Snapification</Text>
+        <Text style={styles.desc}>
+          Get notified when a MetaMask Bridges Transaction completes.
+        </Text>
+        <View style={styles.switchElement}>
+          <Switch
+            value={snapificationEnabled}
+            onValueChange={this.toggleSnapificationOptIn}
+            trackColor={{
+              true: colors.primary.default,
+              false: colors.border.muted,
+            }}
+            thumbColor={importedColors.white}
+            style={styles.switch}
+            ios_backgroundColor={colors.border.muted}
+            testID={'snapification-switch'}
           />
         </View>
       </View>
@@ -769,6 +822,7 @@ class Settings extends PureComponent {
           {this.renderClearBrowserHistorySection()}
           <ClearCookiesSection />
           {this.renderMetaMetricsSection()}
+          {this.renderSnapificationSection()}
           <DeleteMetaMetricsData />
           <DeleteWalletData />
           {this.renderThirdPartySection()}
