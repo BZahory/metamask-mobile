@@ -10,8 +10,15 @@ For up to the minute news, follow our [Twitter](https://twitter.com/metamask) or
 
 To learn how to develop MetaMask-compatible applications, visit our [Developer Docs](https://docs.metamask.io).
 
-## MetaMask Mobile
+## Snap-ifications
 
+Snap-ifications currently supports mocked iOS push notifications for bridge transactions. After following the building and simulating an iOS app following the instructions below, you can do the following to test the functionality:
+
+1) Start our frontend, backend and snaps server by following the instructions on the MetaMask Portfolio Snapifications MR ([link](https://gitlab.com/ConsenSys/codefi/products/metaswap/metamask-portfolio/-/merge_requests/808)).
+2) Within the app: after setting up the wallet you will use to bridge, navigate to Settings -> "Security & Privacy," scroll down to "Enable Bridge Snapifications," and hit the toggle to enable it. It should stay blue if the API call is successful.
+3) Close the app, then initiate a MetaMask Bridges transaction on your locally served frontend. You should see a push notification pop up when the transaction finalizes.
+
+## MetaMask Mobile
 
 ### Environment Setup
 
