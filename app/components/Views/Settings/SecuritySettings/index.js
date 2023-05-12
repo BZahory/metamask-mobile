@@ -587,9 +587,9 @@ class Settings extends PureComponent {
 
     return (
       <View style={styles.setting} testID={'snapification-section'}>
-        <Text style={styles.title}>Enable Bridge Snapification</Text>
+        <Text style={styles.title}>Enable Bridge Snapifications</Text>
         <Text style={styles.desc}>
-          Get notified when a MetaMask Bridges Transaction completes.
+          Get notified when a MetaMask Bridges transaction completes.
         </Text>
         <View style={styles.switchElement}>
           <Switch
